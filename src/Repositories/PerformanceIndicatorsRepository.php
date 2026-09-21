@@ -147,6 +147,6 @@ class PerformanceIndicatorsRepository implements Contract
      */
     protected function planColumn()
     {
-        return 'stripe_price';
+        return 'stripe_plan';
     }
 }

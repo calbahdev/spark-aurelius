@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use Laravel\Spark\Spark;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Laravel\Spark\Events\PaymentMethod\VatIdUpdated;
 use Laravel\Spark\Events\PaymentMethod\BillingAddressUpdated;
 use Laravel\Spark\Contracts\Repositories\UserRepository as UserRepositoryContract;
@@ -66,10 +65,9 @@ class UserRepository implements UserRepositoryContract
             $search->where(Spark::user()->getKeyName(), '<>', $excludeUser->id);
         }
 
-        $query = strtolower($query);
         return $search->where(function ($search) use ($query) {
-            $search->whereRaw('lower(email) like (?)', ["%{$query}%"])
-                ->orWhereRaw('lower(name) like (?)', ["%{$query}%"]);
+            $search->where('email', 'like', $query)
+                   ->orWhere('name', 'like', $query);
         })->get();
     }
 
@@ -83,7 +81,7 @@ class UserRepository implements UserRepositoryContract
         $user->forceFill([
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+            'password' => bcrypt($data['password']),
             'last_read_announcements_at' => Carbon::now(),
             'trial_ends_at' => Spark::onlyTeamPlans() ? null : Carbon::now()->addDays(Spark::trialDays()),
         ])->save();

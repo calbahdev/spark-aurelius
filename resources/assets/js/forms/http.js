@@ -6,6 +6,10 @@ module.exports = {
         return Spark.sendForm('post', uri, form);
     },
 
+    postWithFiles(uri, form) {
+        return Spark.sendFormNew('post', uri, form);
+    },
+
 
     /**
      * Helper method for making PUT HTTP requests.
@@ -52,5 +56,57 @@ module.exports = {
                     reject(errors.response.data);
                 });
         });
-    }
+    },
+
+    sendFormNew(method, uri, form) {
+        return new Promise((resolve, reject) => {
+            form.startProcessing();
+
+            axios[method](uri, Spark.convertToFormData(form))
+                .then(response => {
+                    form.finishProcessing();
+
+                    resolve(response.data);
+                })
+                .catch(errors => {
+                    form.setErrors(errors.response.data.errors);
+
+                    reject(errors.response.data);
+                });
+        });
+    },
+
+    convertToFormData(obj) {
+        const formData = new FormData();
+
+	const ignoreKeys = ["errors","busy","successful","startProcessing","finishProcessing","reset","resetStatus","setErrors"];
+
+        function appendFormData(data, parentKey = '') {
+            if (data === null || data === undefined) {
+                return;
+            }
+
+	    if (ignoreKeys.includes(parentKey))
+		return;
+
+            if (Array.isArray(data)) {
+                data.forEach((item, index) => {
+                    const key = parentKey ? `${parentKey}[${index}]` : index.toString();
+                    appendFormData(item, key);
+                });
+            } else if (typeof data === 'object' && !(data instanceof File) && !(data instanceof Blob)) {
+                Object.keys(data).forEach(key => {
+                    const value = data[key];
+                    const fullKey = parentKey ? `${parentKey}[${key}]` : key;
+                    appendFormData(value, fullKey);
+                });
+            } else {
+                // Primitive value, File, Blob, etc.
+                formData.append(parentKey, data);
+            }
+        }
+
+        appendFormData(obj);
+        return formData;
+    },
 };

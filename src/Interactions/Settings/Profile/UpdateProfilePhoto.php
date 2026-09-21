@@ -44,27 +44,29 @@ class UpdateProfilePhoto implements Contract
     {
         $file = $data['photo'];
 
-        $path = $file->hashName('profiles');
+        $path = $file->hashName();
 
         // We will store the profile photos on the "public" disk, which is a convention
         // for where to place assets we want to be publicly accessible. Then, we can
         // grab the URL for the image to store with this user in the database row.
         $disk = Storage::disk('public');
 
-        $disk->put($path, $this->formatImage($file));
+        $disk->put("profiles/".$path, $this->formatImage($file));
 
         $oldPhotoUrl = $user->photo_url;
 
         // Next, we'll update this URL on the local user instance and save it to the DB
         // so we can access it later. Then we will delete the old photo from storage
         // since we'll no longer need to access it for this specific user profile.
+	
+        if ($oldPhotoUrl) {
+            $disk->delete('profiles/'.$oldPhotoUrl);
+        }
+
         $user->forceFill([
-            'photo_url' => $disk->url($path),
+            'photo_url' => $path,
         ])->save();
 
-        if (preg_match('/profiles\/(.*)$/', $oldPhotoUrl, $matches)) {
-            $disk->delete('profiles/'.$matches[1]);
-        }
     }
 
     /**

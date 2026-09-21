@@ -4,9 +4,7 @@ module.exports = {
      */
     data() {
         return {
-            stripe: Spark.stripeKey ? Stripe(Spark.stripeKey, {
-                apiVersion: Spark.stripeApiVersion
-            }) : null
+            stripe: Spark.stripeKey ? Stripe(Spark.stripeKey) : null
         }
     },
 

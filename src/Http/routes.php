@@ -113,7 +113,7 @@ $router->group(['middleware' => Laravel\Spark\Spark::mustVerifyEmail() ? ['web',
     $router->get('/settings/invoice/{id}', 'Settings\Billing\InvoiceController@download');
 
     // Coupons...
-    $router->get('/coupon/user/{id}', 'CouponController@current');
+    //$router->get('/coupon/user/{id}', 'CouponController@current');
 });
 
 $router->group(['middleware' => 'web'], function ($router) {
@@ -127,7 +127,7 @@ $router->group(['middleware' => 'web'], function ($router) {
     $router->get('/stripe/token', 'StripeTokenController@store');
 
     // Terms Of Service...
-    $router->get('/terms', 'TermsController@show')->name('terms');
+    //$router->get('/terms', 'TermsController@show')->name('terms');
 
     // Authentication...
     $router->get('/login', 'Auth\LoginController@showLoginForm')->name('login');
@@ -143,6 +143,7 @@ $router->group(['middleware' => 'web'], function ($router) {
     $router->post('/login-via-emergency-token', 'Auth\EmergencyLoginController@login');
 
     // Registration...
+    /*
     $router->get('/register', 'Auth\RegisterController@showRegistrationForm')->name('register');
     $router->post('/register', 'Auth\RegisterController@register');
 
@@ -186,15 +187,14 @@ $router->group(['middleware' => 'web'], function ($router) {
     // Kiosk Impersonation...
     $router->get('/spark/kiosk/users/impersonate/{id}', 'Kiosk\ImpersonationController@impersonate');
     $router->get('/spark/kiosk/users/stop-impersonating', 'Kiosk\ImpersonationController@stopImpersonating');
+ 
 });
 
 // Plans...
 $router->get('/spark/plans', 'PlanController@all');
 
 // Invitation
-$router->group(['middleware' => 'throttle:60,1'], function ($router) {
-    $router->get('/invitations/{invitation}', 'InvitationController@show');
-});
+$router->get('/invitations/{invitation}', 'InvitationController@show');
 
 // Tax Rates...
 $router->post('/tax-rate', 'TaxRateController@calculate');
@@ -205,3 +205,6 @@ $router->get('/geocode/states/{country}', 'GeocodingController@states');
 
 // Webhooks...
 $router->post('/webhook/stripe', 'Settings\Billing\StripeWebhookController@handleWebhook');
+*/
+});
+

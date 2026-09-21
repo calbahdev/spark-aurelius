@@ -2,7 +2,6 @@
 
 namespace Laravel\Spark\Services;
 
-use Laravel\Cashier\Cashier;
 use Stripe\PaymentMethod as StripePaymentMethod;
 
 class Stripe
@@ -15,7 +14,9 @@ class Stripe
      */
     public function countryForToken($token)
     {
-        return Cashier::stripe()->paymentMethods->retrieve($token)->card->country;
+        return StripePaymentMethod::retrieve(
+            $token, config('cashier.secret')
+        )->card->country;
     }
 
     /**

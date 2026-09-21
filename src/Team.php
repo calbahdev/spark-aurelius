@@ -29,8 +29,8 @@ class Team extends Model
      * @var array
      */
     protected $hidden = [
-        'pm_type',
-        'pm_last_four',
+        'card_brand',
+        'card_last_four',
         'card_country',
         'billing_address',
         'billing_address_line_2',
@@ -127,7 +127,7 @@ class Team extends Model
     {
         return empty($value)
                 ? 'https://www.gravatar.com/avatar/'.md5($this->name.'@spark.laravel.com').'.jpg?s=200&d=identicon'
-                : url($value);
+                : $value;
     }
 
     /**
@@ -138,8 +138,8 @@ class Team extends Model
     public function shouldHaveOwnerVisibility()
     {
         $this->makeVisible([
-            'pm_type',
-            'pm_last_four',
+            'card_brand',
+            'card_last_four',
             'card_country',
             'billing_address',
             'billing_address_line_2',

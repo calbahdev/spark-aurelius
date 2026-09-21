@@ -4,7 +4,7 @@
 window.URI = require('urijs');
 window.axios = require('axios');
 window._ = require('lodash');
-window.moment = require('moment');
+//window.moment = require('moment');
 window.Promise = require('promise');
 window.Popper = require('popper.js').default;
 window.__ = (key, replace) => {
@@ -19,7 +19,6 @@ window.__ = (key, replace) => {
 
 /*
  * Define Moment locales
- */
 window.moment.defineLocale('en-short', {
     parentLocale: 'en',
     relativeTime : {
@@ -39,6 +38,7 @@ window.moment.defineLocale('en-short', {
     }
 });
 window.moment.locale('en');
+ */
 
 /*
  * Load jQuery and Bootstrap jQuery, used for front-end interaction.

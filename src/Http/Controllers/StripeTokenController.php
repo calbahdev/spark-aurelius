@@ -17,7 +17,7 @@ class StripeTokenController extends Controller
      */
     public function store(Request $request)
     {
-        $setupIntent = Cashier::stripe()->setupIntents->create();
+        $setupIntent = SetupIntent::create(null, Cashier::stripeOptions());
 
         return [
             'clientSecret' => $setupIntent->client_secret

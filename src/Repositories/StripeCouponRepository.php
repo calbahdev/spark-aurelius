@@ -3,7 +3,6 @@
 namespace Laravel\Spark\Repositories;
 
 use Exception;
-use Laravel\Cashier\Cashier;
 use Laravel\Spark\Spark;
 use Laravel\Spark\Coupon;
 use Stripe\Coupon as StripeCoupon;
@@ -33,7 +32,9 @@ class StripeCouponRepository implements CouponRepository
     public function find($code)
     {
         try {
-            $coupon = Cashier::stripe()->coupons->retrieve($code);
+            $coupon = StripeCoupon::retrieve(
+                $code, ['api_key' => config('cashier.secret')]
+            );
 
             if ($coupon && $coupon->valid) {
                 return $this->toCoupon($coupon);

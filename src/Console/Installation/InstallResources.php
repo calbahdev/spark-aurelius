@@ -38,10 +38,8 @@ class InstallResources
     {
         $this->installFrontEndDirectories();
 
-        foreach(['en', 'ar'] as $lang) {
-            if (! is_dir(resource_path("lang/$lang"))) {
-                mkdir(resource_path("lang/$lang"), recursive: true);
-            }
+        if (! is_dir(resource_path('lang/ar'))) {
+            mkdir(resource_path('lang/ar'));
         }
 
         $files = [

@@ -34,6 +34,27 @@ class LoginController extends Controller
         $this->redirectTo = Spark::afterLoginRedirect();
     }
 
+    protected function attemptLogin(Request $request)
+    {
+        $credentials = $request->only($this->username(), 'password');
+
+        // First, attempt normal login (email + password)
+        if (!$this->guard()->attempt($credentials, $request->filled('remember'))) {
+            return false;
+        }
+
+        // Now check the bitfield on the authenticated user
+        $user = $this->guard()->user();
+
+        // Change `1` to the bit value you want to check
+        if (($user->other_flags & 1) !== 0) {   // Example: checks if bit 0 is set
+            $this->guard()->logout();      // Important: log them out again
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Show the application login form.
      *
@@ -108,7 +129,7 @@ class LoginController extends Controller
     public function showTokenForm(Request $request)
     {
         return $request->session()->has('spark:auth:id')
-                        ? view('spark::auth.token') : redirect('login');
+            ? view('spark::auth.token') : redirect('login');
     }
 
     /**
@@ -124,7 +145,7 @@ class LoginController extends Controller
         // If there is no authentication ID stored in the session, it means that the user
         // hasn't made it through the login screen so we'll just redirect them back to
         // the login view. They must have hit the route manually via a specific URL.
-        if (! $request->session()->has('spark:auth:id')) {
+        if (!$request->session()->has('spark:auth:id')) {
             return redirect('login');
         }
 
@@ -137,7 +158,8 @@ class LoginController extends Controller
         // to their intended location within the protected part of this application.
         if (Spark::interact(Verify::class, [$user, $request->token])) {
             Auth::login($user, $request->session()->pull(
-                'spark:auth:remember', false
+                'spark:auth:remember',
+                false
             ));
 
             return redirect()->intended($this->redirectPath());
@@ -159,7 +181,7 @@ class LoginController extends Controller
 
         return redirect(
             property_exists($this, 'redirectAfterLogout')
-                    ? $this->redirectAfterLogout : '/'
+            ? $this->redirectAfterLogout : '/'
         );
     }
 }

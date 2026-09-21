@@ -20,6 +20,6 @@ class Subscription extends CashierSubscription
      */
     public function getProviderPlanAttribute()
     {
-        return $this->stripe_price;
+        return $this->stripe_plan;
     }
 }
